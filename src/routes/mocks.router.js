@@ -1,11 +1,18 @@
 import {Router} from "express"
-import petsController from "../controllers/pets.controller.js"
-import sessionsController from "../controllers/sessions.controller.js"
+import { generateUser } from "../utils/generateUser.js"
+import { generatePet } from "../utils/generatePet.js"
 
 const router = Router()
 
-router.get("/mockingpets", petsController.createPet)
-router.post("/mockingusers", sessionsController.register)
+router.get("/mockingusers", async(req,res)=>{
+    let users = []
+    for (let i = 0; i<100; i++){
+        usuarios.push(generateUser())
+    }
+    res.send({status: "success", payload:users})
+})
+
+router.get("/mockingpets", generatePet())
 router.post("/generateData")
 
 
