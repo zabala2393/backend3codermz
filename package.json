@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
-    "test": "mocha test/supertest.test.js"
+    "test": "mocha test/supertest.test.js",
+    "args": "node src/app.js -p 8080 -u admin --mode -dev"
   },
   "keywords": [],
   "author": "",
