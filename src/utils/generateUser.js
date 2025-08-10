@@ -1,20 +1,20 @@
-import {fakerDE as faker} from '@faker-js/faker'
-import { createHash } from 'crypto'
+import {fakerES_MX as faker} from '@faker-js/faker'
+import  crypto  from 'crypto'
 
 export const generateUser = () => {
-    let numOfPets = 100
-    let pets = []
-    for (let i=0; i < numOfPets; i++) {
-        pets.push(generatePet())
-    }
+
+    let first_name = faker.person.firstName()
+    let last_name = faker.person.lastName()
+    let password = "coder123"
+    let hashedPassword = crypto.createHash("sha256",password).digest('hex')
 
     return {
         id: faker.database.mongodbObjectId(),
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: createHash("coder123"),
+        first_name,
+        last_name,
+        email: faker.internet.email({firstName:first_name, lastName:last_name}),
+        password: hashedPassword,
         role: "user" || "admin",
-        pets
+        pets: []
     }
 }

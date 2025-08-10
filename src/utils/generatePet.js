@@ -1,10 +1,11 @@
-import {fakerDE as faker} from '@faker-js/faker'
+import {fakerES_MX as faker} from '@faker-js/faker'
 
 export const generatePet = () => {
-    return {
+
+    return {        
         id: faker.database.mongodbObjectId(),
         name: faker.person.firstName(),
-        specie: faker.animal.type(),
+        specie: faker.animal.cat(),
         adopted: false,
         owner: null,
         image: faker.internet.emoji()

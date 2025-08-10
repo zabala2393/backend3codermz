@@ -1,8 +1,9 @@
 import "./helpers/env.helper.js"
 import express from 'express';
-import compression from "express-compression";
+import compress from 'express-compression'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import zlib from "zlib"
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -24,6 +25,7 @@ if (connection) {
     console.log("Conectado correctamente a base de datos mongo")
 }
 
+app.use(compress({brotli:{enabled:true}}))
 app.use(express.json());
 app.use(cookieParser());
 
@@ -32,7 +34,9 @@ app.use('/api/pets',petsRouter);
 app.use('/api/adoptions',adoptionsRouter);
 app.use('/api/sessions',sessionsRouter);
 app.use('/api/mocks', mocksRouter);
-app.use(compression())
 
-app.listen(PORT, ready, ()=>console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`))
+
+app.listen(PORT, ready, ()=>
+    console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`)
+)
 app.use(setupResponses)
