@@ -1,9 +1,9 @@
 import "./helpers/env.helper.js"
 import express from 'express';
-import compress from 'express-compression'
+//import compress from 'express-compression'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-import zlib from "zlib"
+//import zlib from "zlib"
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -25,7 +25,7 @@ if (connection) {
     console.log("Conectado correctamente a base de datos mongo")
 }
 
-app.use(compress({brotli:{enabled:true}}))
+//app.use(compress({brotli:{enabled:true}}))
 app.use(express.json());
 app.use(cookieParser());
 
