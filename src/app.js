@@ -12,6 +12,8 @@ import sessionsRouter from './routes/sessions.router.js';
 import mocksRouter from './routes/mocks.router.js'
 import argsHelper from "./helpers/args.helper.js";
 import setupResponses from "./middlewares/setupResponses.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express"
 
 const app = express();
 const PORT = process.env.PORT||8080;
@@ -24,6 +26,20 @@ const connection = mongoose.connect(process.env.URL_MONGO)
 if (connection) {
     console.log("Conectado correctamente a base de datos mongo")
 }
+
+const swaggerOptions = {
+    definition:{
+        openapi: '3.0.3',
+        info:{
+            title: 'Documentacion de modulos de Adoptme',
+            description: 'API para manejo de logica de negocio de Adoptme'
+        }
+    },
+    apis:[`src/docs/Users/Users.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 //app.use(compress({brotli:{enabled:true}}))
 app.use(express.json());
