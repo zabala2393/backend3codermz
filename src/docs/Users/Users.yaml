@@ -9,12 +9,81 @@ paths:
           description: Los usuarios fueron obtenidos OK desde la DB
         "500":
           description: Error interno del servidor
-    post:
-      summary: Graba un usuario
+  /api/users/{uid}:
+    get:
+      summary: Busca un usuario por el uid provisto y lo devuelve si existe en DB
       tags:
         - Users
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: id del usuario a encontrar
       responses:
         "201":
-          description: Usuario creado
+          description: Usuario objetivo obtenido de la DB
+        "404":
+          description: Usuario no encontrado en DB
         "500":
           description: Error interno del servidor
+    delete:
+      summary: Busca un usuario por el uid provisto y lo elimina si existe en DB
+      tags:
+        - Users
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: id del usuario a encontrar
+      responses:
+        "201":
+          description: Usuario objetivo eliminado de la DB
+        "404":
+          description: Usuario no encontrado en DB
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Busca un usuario por el uid provisto y modificada las propiedades recibidas
+      tags:
+        - Users
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: id del usuario a modificar
+      responses:
+        "201":
+          description: Usuario objetivo actualizado en la DB
+        "401":
+          description: Propiedades inexistentes/tipo de dato incorrecto
+        "404":
+          description: Usuario no encontrado en DB
+        "500":
+          description: Error interno del servidor
+          
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id automatico de Mongo
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido...    
+        email:
+          type: string
+          description: Correo electronico
+        password: 
+          type: string
+          description: contraseña de acceso  
+      example:
+        _id: ObjectId("68992b9221a88657c7ceb3a3")
+        first_name: Fernando Javier
+        last_name: Zambrano Cintrón
+        email: FernandoJavier.ZambranoCintron@yahoo.com
+        password: 123

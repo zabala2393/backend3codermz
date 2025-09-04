@@ -2,12 +2,17 @@ import PetDTO from "../dto/Pet.dto.js";
 import { petsService } from "../services/index.js"
 import __dirname from "../utils/index.js";
 
-const getAllPets = async (req, res) => {
-    const pets = await petsService.getAll();
-    res.send({ status: "success", payload: pets })
+const getAllPets = async (req, res, next) => {
+    try {
+        const pets = await petsService.getAll();
+        res.send({ status: "success", payload: pets })
+    } catch (error) {
+        next(error)
+    }
+
 }
 
-const createPet = async (req, res) => {
+const createPet = async (req, res, next) => {
 
     try {
         const { name, specie, birthDate } = req.body;
@@ -21,7 +26,7 @@ const createPet = async (req, res) => {
 
 }
 
-const updatePet = async (req, res) => {
+const updatePet = async (req, res, next) => {
     try {
         const petUpdateBody = req.body;
         const petId = req.params.pid;
@@ -32,7 +37,7 @@ const updatePet = async (req, res) => {
     }
 }
 
-const deletePet = async (req, res) => {
+const deletePet = async (req, res, next) => {
     try {
         const petId = req.params.pid;
         const result = await petsService.delete(petId);
@@ -43,7 +48,7 @@ const deletePet = async (req, res) => {
 
 }
 
-const createPetWithImage = async (req, res) => {
+const createPetWithImage = async (req, res, next) => {
     try {
         const file = req.file;
         const { name, specie, birthDate } = req.body;

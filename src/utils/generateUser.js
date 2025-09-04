@@ -14,7 +14,7 @@ export const generateUser = () => {
         last_name,
         email: faker.internet.email({firstName:first_name, lastName:last_name}),
         password: password,
-        role: faker.helpers.arrayElement(["user", "admin"]),
+        role: faker.helpers.arrayElement(['USER', 'ADMIN']),
         pets: []
     }
 }
