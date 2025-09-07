@@ -5,7 +5,7 @@ import mongoose, { isValidObjectId } from "mongoose"
 import { faker } from "@faker-js/faker"
 const requester = supertest("http://localhost:8080")
 
-await mongoose.connect("mongodb+srv://gemini2393:19250893@e-commerce.dkxb7.mongodb.net/")
+mongoose.connect(process.env.URL_MONGO)
 
 
 describe("Pruebas router pets", function () {
