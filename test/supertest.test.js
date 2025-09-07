@@ -1,11 +1,14 @@
 import { describe, it } from "mocha"
+import { config } from "dotenv"
 import supertest from "supertest"
 import { expect, } from "chai"
 import mongoose, { isValidObjectId } from "mongoose"
 import { faker } from "@faker-js/faker"
+
 const requester = supertest("http://localhost:8080")
 
-mongoose.connect(process.env.URL_MONGO)
+config()
+await mongoose.connect(process.env.URL_MONGO)
 
 
 describe("Pruebas router pets", function () {
@@ -60,8 +63,6 @@ describe("Pruebas router pets", function () {
 
             let {status, body} = await requester.put(`/api/pets/${crearMock.body.payload._id}`).send(updateMock)
 
-            console.log(status)
-            console.log(body)
             expect(status).to.be.eq(200)
             expect(body).to.has.property("_id")
             expect(isValidObjectId(body._id)).to.be.true

@@ -1,5 +1,5 @@
 node_modules
-.env.prod
+.env
 .env.dev
 .env.test
 adoptme-nest
