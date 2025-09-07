@@ -35,7 +35,7 @@ const swaggerOptions = {
             description: 'API para manejo de logica de negocio de Adoptme'
         }
     },
-    apis:[`src/docs/Users/Users.yaml`]
+    apis:[`src/docs/*.yaml`]
 }
 
 const specs = swaggerJSDoc(swaggerOptions)
