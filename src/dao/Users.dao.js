@@ -20,7 +20,7 @@ export default class Users {
     }
 
     update = (id,doc) =>{
-        return userModel.findByIdAndUpdate(id,{$set:doc})
+        return userModel.findByIdAndUpdate(id,{$set:doc}, {new:true})
     }
 
     delete = (id) =>{
