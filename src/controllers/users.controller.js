@@ -28,7 +28,7 @@ const createMany = async (req, res, next) => {
 const getUser = async (req, res, next) => {
     try {
         const userId = req.params.uid;
-        const user = await usersService.getUserById(userId);
+        const user = await usersService.getBy({_id:userId});
         if (!user) return res.status(404).send({ status: "error", error: "User not found" })
         res.send({ status: "success", payload: user })
     } catch (error) {

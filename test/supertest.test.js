@@ -8,14 +8,71 @@ import { faker } from "@faker-js/faker"
 const requester = supertest("http://localhost:8080")
 
 config()
-await mongoose.connect(process.env.URL_MONGO)
+let connection = await mongoose.connect(process.env.URL_MONGO)
 
-
-describe("Pruebas router pets", function () {
+describe("Pruebas routers de logica de negocio", async function () {
     this.timeout(5000)
 
     after(async () => {
+        await mongoose.connection.collection("users").deleteMany({ role: "test" })
         await mongoose.connection.collection("pets").deleteMany({ specie: "test" })
+    })
+
+    describe("Test router users", async function () {
+
+        it("Solicitud GET a /api/users debe traer todos los usuarios de DB correctamente", async () => {
+            let { status, body } = await requester.get("/api/users")
+            expect(status).to.be.eq(200)
+            expect(body).to.be.an('object')
+        })
+
+        it("Solicitud GET a /api/users/:uid debe buscar el usuario en DB y si existe retornarlo", async () => {
+            let userMock = {
+                first_name: "Ines",
+                last_name: "Perada",
+                email: faker.internet.email(),
+                password: "coder74590",
+                role: "test",      
+            }
+
+            const registrar = await requester.post("/api/sessions/register").send(userMock)
+
+            let { status, body } = await requester.get(`/api/users/${registrar.body.payload_id}`)
+
+            expect(status).to.be.eq(200)
+            expect(body).to.be.an('object')
+            expect(body).to.has.property("_id")
+            expect(isValidObjectId(body._id).to.be.true)
+        })
+
+        it("Solicitud GET a /api/users/:uid que recibe un ID incorrecto debe retornar un error", async () => {
+            let idMock = faker.database.mongodbObjectId()
+            let { status, body } = await requester.get(`/api/users/${idMock}`)
+
+            expect(status).to.be.eq(404)
+            expect(body).to.be.an('object')
+        })
+
+        it("Solicitud DELETE a /api/users/:uid que recibe un ID correcto debe eliminar al usuario encontrado de la DB", async () => {
+            let userMock = {
+                first_name: "Ines",
+                last_name: "Perada",
+                email: faker.internet.email(),
+                password: "coder74590",
+                role: "test",
+                pets: []
+            }
+
+            let registrar = await requester.post("/api/sessions/register").send(userMock)
+
+            let { status, body } = await requester.delete(`/api/users/${buscar.body._id}`)
+
+            expect(status).to.be.eq(200)
+            expect(body).to.be.an('object')
+            expect(body).to.has.property(status = "success")
+
+
+        })
     })
 
     describe("Test router /api/pets", async () => {
@@ -46,7 +103,7 @@ describe("Pruebas router pets", function () {
             expect(isValidObjectId(body.payload._id)).to.be.true
         })
 
-        it("Si envio propiedades correctas de mascota al /api/pets/:pid debe modificar correctamente las propiedades del objeto en DB", async()=>{
+        it("Si envio propiedades correctas de mascota al /api/pets/:pid debe modificar correctamente las propiedades del objeto en DB", async () => {
             let petMock = {
                 name: "Rocky",
                 specie: "test",
@@ -59,9 +116,9 @@ describe("Pruebas router pets", function () {
                 name: "Bobby",
                 adopted: true,
                 image: faker.image.avatar()
-            }   
+            }
 
-            let {status, body} = await requester.put(`/api/pets/${crearMock.body.payload._id}`).send(updateMock)
+            let { status, body } = await requester.put(`/api/pets/${crearMock.body.payload._id}`).send(updateMock)
 
             expect(status).to.be.eq(200)
             expect(body).to.has.property("_id")
@@ -101,5 +158,4 @@ describe("Pruebas router pets", function () {
             expect(isValidObjectId(body.payload._id)).to.be.equal(true)
             expect(body.payload.image).to.be.ok
         })
-    })
-})
+    })})
