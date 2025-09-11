@@ -61,7 +61,7 @@ const createPetWithImage = async (req, res, next) => {
         const file = req.file;
         const { name, specie, birthDate } = req.body;
         if (!name || !specie || !birthDate) return res.status(400).send({ status: "error", error: "Incomplete values" })
-        console.log(file);
+
         const pet = PetDTO.getPetInputFrom({
             name,
             specie,

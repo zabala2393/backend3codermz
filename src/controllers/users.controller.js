@@ -28,7 +28,7 @@ const createMany = async (req, res, next) => {
 const getUser = async (req, res, next) => {
     try {
         const userId = req.params.uid;
-        const user = await usersService.getBy({_id:userId});
+        const user = await usersService.getBy({ _id: userId });
         if (!user) return res.status(404).send({ status: "error", error: "User not found" })
         res.send({ status: "success", payload: user })
     } catch (error) {
@@ -39,12 +39,12 @@ const getUser = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
     try {
-        const updateBody = req.body;
+        const updateBody = req.body; 
         const userId = req.params.uid;
         const user = await usersService.getUserById(userId);
         if (!user) return res.status(404).send({ status: "error", error: "User not found" })
-        const result = await usersService.update(userId, updateBody);
-        res.send({ status: "success", message: "User updated", result })
+        const result = await usersService.update(userId,updateBody);
+        res.send({ status: "success", result })
     } catch (error) {
         next(error)
     }

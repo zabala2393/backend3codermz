@@ -18,10 +18,9 @@ const register = async (req, res, next) => {
             password: hashedPassword
         }
         let result = await usersService.create(user);
-        console.log(result);
         res.send({ status: "success", payload: result._id });
     } catch (error) {
-
+        next(error)
     }
 }
 
@@ -37,7 +36,7 @@ const login = async (req, res, next) => {
         const token = jwt.sign(userDto, 'tokenSecretJWT', { expiresIn: "1h" });
         res.cookie('coderCookie', token, { maxAge: 3600000 }).send({ status: "success", message: "Logged in" })
     } catch (error) {
-
+        next(error)
     }
 
 }
@@ -72,6 +71,10 @@ const unprotectedLogin = async (req, res, next) => {
 const unprotectedCurrent = async (req, res, next) => {
     try {
         const cookie = req.cookies['unprotectedCookie']
+
+        if (!cookie) {
+            return res.status(403).send({status: 'Error', message: 'Error de autenticacion'})
+        }
         const user = jwt.verify(cookie, 'tokenSecretJWT');
         if (user)
             return res.send({ status: "success", payload: user })
