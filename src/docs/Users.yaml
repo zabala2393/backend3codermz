@@ -66,8 +66,6 @@ paths:
                 type: array
                 items:
                   $ref: "#components/schemas/User"
-        "401":
-          description: Propiedades inexistentes/tipo de dato incorrecto
         "404":
           description: Usuario no encontrado en DB
         "500":
