@@ -1,9 +1,8 @@
 import "./helpers/env.helper.js"
 import express from 'express';
-//import compress from 'express-compression'
+import compression from 'express-compression'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-//import zlib from "zlib"
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -41,7 +40,9 @@ const swaggerOptions = {
 const specs = swaggerJSDoc(swaggerOptions)
 app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-//app.use(compress({brotli:{enabled:true}}))
+app.use(compression({
+    brotli:{enabled:true}
+}))
 app.use(express.json());
 app.use(cookieParser());
 
@@ -50,7 +51,6 @@ app.use('/api/pets',petsRouter);
 app.use('/api/adoptions',adoptionsRouter);
 app.use('/api/sessions',sessionsRouter);
 app.use('/api/mocks', mocksRouter);
-
 
 app.listen(PORT, ready, ()=>
     console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`)
