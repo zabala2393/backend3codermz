@@ -1,6 +1,6 @@
 import "./helpers/env.helper.js"
 import express from 'express';
-import compression from 'express-compression'
+import compression from 'express'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 

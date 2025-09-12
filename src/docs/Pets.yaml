@@ -1,24 +1,121 @@
 paths:
-  /api/pets:
+  /api/pets/:
+    get:
+      summary: Obtiene todas las mascotas
+      tags:
+        - Pets
+      responses:
+        "200":
+          description: Las mascotas fueron obtenidas OK desde la DB
+        "500":
+          description: Error interno del servidor
     post:
-      summary: Crea una nueva mascota en DB en base a los datos recibidos
+      summary: Crea una nueva mascota
+
+
+
+
+
+      
+  /api/pets/{pid}:
+    delete:
+      summary: Busca una mascota por el uid provisto y la elimina si existe en DB
       tags:
         - Pets
       parameters:
-      - name: 
-
-
-
-
-
-
-    
-    get:
-      summary: Devuelve todas las mascotas existentes en DB
+        - name: pid
+          in: path
+          required: true
+          description: id de la mascota a encontrar
+      responses:
+        "200":
+          description: Mascota objetivo eliminada de la DB
+        "404":
+          description: Mascota no encontrada en DB
+        "500":
+          description: Error interno del servidor
+    put:
+      summary: Busca una mascota por el uid provisto y modifica las propiedades recibidas
       tags:
         - Pets
-      responses: 
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: id de la mascota a modificar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updatePet"
+      responses:
         "200":
-          description: Lista de mascotas devuelta
+          description: Mascota objetivo actualizada en la DB
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Pet"
+        "401":
+          description: Propiedades inexistentes/tipo de dato incorrecto
+        "404":
+          description: Mascota no encontrada en DB
         "500":
-          description: Error interno de servidor
+          description: Error interno del servidor
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id automatico de Mongo
+        name:
+          type: string
+          description: Nombre de la mascota
+        specie:
+          type: string
+          description: Especie de la mascota
+        birthDate:
+          type: Date
+          description: Fecha de nacimiento de la mascota
+        adopted:
+          type: boolean
+          description: Estado de adopcion de la mascota
+        owner:
+          type: ObjectId
+          description: Usuario al cual pertenece la mascota
+        image:
+          type: string
+          description: Foto de la mascota
+      example:
+        _id: ObjectId("68992b9321a88657c7ceb3f8")
+        name: Sonia
+        specie: Minskin
+        birthDate: "2023-05-07T13:40:36.469Z"
+        adopted: false
+        image: ""
+  requestBodies:
+    updatePet:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre de la mascota
+        specie:
+          type: string
+          description: Especie de la mascota
+        birthDate:
+          type: string
+          description: fecha de nacimiento de la mascota
+        adopted:
+          type: boolean
+          description: Estado de adopcion de la mascota
+        owner:
+          type: string
+          description: Usuario al cual pertenece la mascota
+        image:
+          type: string
+          description: Foto de la mascota

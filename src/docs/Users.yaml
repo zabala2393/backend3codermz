@@ -15,10 +15,10 @@ paths:
       tags:
         - Users
       parameters:
-      - name: uid
-        in: path
-        required: true
-        description: id del usuario a encontrar        
+        - name: uid
+          in: path
+          required: true
+          description: id del usuario a encontrar
       responses:
         "200":
           description: Usuario objetivo obtenido de la DB
@@ -31,10 +31,10 @@ paths:
       tags:
         - Users
       parameters:
-      - name: uid
-        in: path
-        required: true
-        description: id del usuario a encontrar
+        - name: uid
+          in: path
+          required: true
+          description: id del usuario a encontrar
       responses:
         "200":
           description: Usuario objetivo eliminado de la DB
@@ -47,20 +47,31 @@ paths:
       tags:
         - Users
       parameters:
-      - name: uid
-        in: path
+        - name: uid
+          in: path
+          required: true
+          description: id del usuario a modificar
+      requestBody:
         required: true
-        description: id del usuario a modificar
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateUser'
       responses:
         "200":
           description: Usuario objetivo actualizado en la DB
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/User"
         "401":
           description: Propiedades inexistentes/tipo de dato incorrecto
         "404":
           description: Usuario no encontrado en DB
         "500":
           description: Error interno del servidor
-
 components:
   schemas:
     User:
@@ -74,16 +85,38 @@ components:
           description: Nombre del usuario
         last_name:
           type: string
-          description: Apellido...    
+          description: Apellido...
         email:
           type: string
           description: Correo electronico
-        password: 
+        password:
           type: string
-          description: contraseña de acceso  
+          description: contraseña de acceso
       example:
         _id: ObjectId("68992b9221a88657c7ceb3a3")
         first_name: Fernando Javier
         last_name: Zambrano Cintrón
         email: FernandoJavier.ZambranoCintron@yahoo.com
         password: 123
+  requestBodies:
+    updateUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: email
+          description: Correo del usuario
+        password:
+          type: password
+          description: Contraseña del usuario
+        role:
+          type: string
+          description: Rol del usuario dentro de la aplicacion
+        pets:
+          type: array
+          description: Mascotas adoptadas por el usuario
