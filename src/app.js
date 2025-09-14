@@ -15,7 +15,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express"
 
 const app = express();
-const PORT = process.env.PORT||8080;
+const PORT = process.env.PORT || 8080;
 const ready = async () => {
     console.log(`Server ready on port ${PORT}`)
     console.log("mode" + argsHelper.mode)
@@ -27,32 +27,32 @@ if (connection) {
 }
 
 const swaggerOptions = {
-    definition:{
+    definition: {
         openapi: '3.0.3',
-        info:{
+        info: {
             title: 'Documentacion de modulos de Adoptme',
             description: 'API para manejo de logica de negocio de Adoptme'
         }
     },
-    apis:[`src/docs/*.yaml`]
+    apis: [`src/docs/*.yaml`]
 }
 
 const specs = swaggerJSDoc(swaggerOptions)
 app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 app.use(compression({
-    brotli:{enabled:true}
+    brotli: { enabled: true }
 }))
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/users',usersRouter);
-app.use('/api/pets',petsRouter);
-app.use('/api/adoptions',adoptionsRouter);
-app.use('/api/sessions',sessionsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/pets', petsRouter);
+app.use('/api/adoptions', adoptionsRouter);
+app.use('/api/sessions', sessionsRouter);
 app.use('/api/mocks', mocksRouter);
 
-app.listen(PORT, ready, ()=>
+app.listen(PORT, ready, () =>
     console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`)
 )
 app.use(setupResponses)

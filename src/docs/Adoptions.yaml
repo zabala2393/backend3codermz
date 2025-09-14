@@ -1,0 +1,68 @@
+paths:
+  /api/adoptions:
+    get:
+      summary: Obtiene todas las adopciones
+      tags:
+        - Adoptions
+      responses:
+        "200":
+          description: Adopciones obtenidas OK de la DB
+        "500":
+          description: Error interno del servidor
+  /api/adoptions/{aid}:
+    get:
+      summary: Obtiene una adopcion objetivo en base al aid recibido por parametro
+      tags:
+        - Adoptions
+      parameters:
+        - name: aid
+          in: path
+          required: true
+          description: Id de la adopcion a obtener
+      responses:
+        "200":
+          description: Adopcion recibida OK de la DB
+        "404":
+          description: Adopcion no encontrada en DB
+        "500":
+          description: Error interno del servidor
+  /api/adoptions/{uid}/{pid}:
+    post:
+      summary: Crea una adopcion en base al id de usuario (uid) y el id de mascota (pid) recibidas por parametro
+      tags:
+        - Adoptions
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: Id del usuario adoptante
+        - name: pid
+          in: path
+          description: Id de la mascota a ser adoptada
+      responses:
+        "200":
+          description: Adopcion creada con exito
+        "400":
+          description: Mascota objetivo ya fue adoptada
+        "404":
+          description: Mascota/Usuario no encontrados en DB
+        "500":
+          description: Error interno del servidor
+components:
+  schemas:
+    Adoption:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id automatico de Mongo
+        owner:
+          type: ObjectId
+          description: Id del usuario adoptante
+        pet:
+          type: ObjectId
+          description: Id de la mascota adoptada
+      example:
+        _id: ObjectId(68c2b70c19837cf45c07741d)
+        owner: 68c2b70b19837cf45c077415
+        pet: 68c2b70b19837cf45c077417

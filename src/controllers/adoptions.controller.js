@@ -1,6 +1,6 @@
 import { adoptionsService, petsService, usersService } from "../services/index.js"
 
-const getAllAdoptions = async (req, res) => {
+const getAllAdoptions = async (req, res,next) => {
     try {
         const result = await adoptionsService.getAll();
         res.send({ status: "success", payload: result })
@@ -10,7 +10,7 @@ const getAllAdoptions = async (req, res) => {
 
 }
 
-const getAdoption = async (req, res) => {
+const getAdoption = async (req, res, next) => {
 
     try {
         const adoptionId = req.params.aid;
@@ -23,11 +23,12 @@ const getAdoption = async (req, res) => {
 
 }
 
-const createAdoption = async (req, res) => {
+const createAdoption = async (req, res,next) => {
 
     try {
         const { uid, pid } = req.params;
-        const user = await usersService.getUserById(uid);
+        console.log(uid)
+        const user = await usersService.getBy({_id: uid});
         if (!user) return res.status(404).send({ status: "error", error: "user Not found" });
         const pet = await petsService.getBy({ _id: pid });
         if (!pet) return res.status(404).send({ status: "error", error: "Pet not found" });

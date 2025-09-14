@@ -38,19 +38,22 @@ const login = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-
 }
 
 const current = async (req, res, next) => {
     try {
         const cookie = req.cookies['coderCookie']
+        if (!cookie) {
+            return res.status(403).send({ status: 'Error', message: 'Error de autenticacion' })
+        }
         const user = jwt.verify(cookie, 'tokenSecretJWT');
         if (user)
             return res.send({ status: "success", payload: user })
+        if (!user)
+            return res.status(404).send({ message: "User not logged in/ No session cookie available" })
     } catch (error) {
         next(error)
     }
-
 }
 
 const unprotectedLogin = async (req, res, next) => {
@@ -61,19 +64,18 @@ const unprotectedLogin = async (req, res, next) => {
         if (!user) return res.status(404).send({ status: "error", error: "User doesn't exist" });
         const isValidPassword = await passwordValidation(user, password);
         if (!isValidPassword) return res.status(400).send({ status: "error", error: "Incorrect password" });
-        const token = jwt.sign(user, 'tokenSecretJWT', { expiresIn: "1h" });
+        const token = jwt.sign({ user }, "tokenSecretJWT", { expiresIn: "1h" });
         res.cookie('unprotectedCookie', token, { maxAge: 3600000 }).send({ status: "success", message: "Unprotected Logged in" })
     } catch (error) {
         next(error)
     }
-
 }
 const unprotectedCurrent = async (req, res, next) => {
     try {
         const cookie = req.cookies['unprotectedCookie']
 
         if (!cookie) {
-            return res.status(403).send({status: 'Error', message: 'Error de autenticacion'})
+            return res.status(403).send({ status: 'Error', message: 'Error de autenticacion' })
         }
         const user = jwt.verify(cookie, 'tokenSecretJWT');
         if (user)
@@ -81,7 +83,6 @@ const unprotectedCurrent = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-
 }
 export default {
     current,
