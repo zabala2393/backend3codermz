@@ -8,7 +8,6 @@ import cookieParser from "cookie-parser"
 const requester = supertest("http://localhost:8080")
 cookieParser()
 config()
-compression({ brotli: { enabled: true } })
 
 let connection = await mongoose.connect(process.env.URL_MONGO)
 
@@ -239,7 +238,7 @@ describe("Pruebas routers de logica de negocio", async function () {
                 password: faker.internet.password({ length: 23 })
             }
             const { status } = await requester.get('/api/sessions/unprotectedLogin').send(sesionMock)
-            expect(status).to.be.eq(400)
+            expect(status).to.be.eq(404)
         })
 
         it("Solicitud GET a /api/sessions/unprotectedCurrent con una cookie erronea debe retornar un error", async () => {

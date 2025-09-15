@@ -3,6 +3,8 @@ import express from 'express';
 import compression from 'express-compression'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import cluster from "cluster";
+import os from "os";
 
 import usersRouter from './routes/users.router.js';
 import petsRouter from './routes/pets.router.js';
@@ -14,45 +16,58 @@ import setupResponses from "./middlewares/setupResponses.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express"
 
-const app = express();
-const PORT = process.env.PORT || 8080;
-const ready = async () => {
-    console.log(`Server ready on port ${PORT}`)
-    console.log("mode" + argsHelper.mode)
+const numCpus = os.cpus().length
+
+if (cluster.isPrimary) {
+    for (let i = 0; i < numCpus; i++) {
+        cluster.fork()
+    }
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Proceso ${worker.process.pid} ha terminado`)
+        cluster.fork()
+    })
+} else {
+    const app = express()
+    const PORT = process.env.PORT || 8080;
+    const ready = async () => {
+        console.log(`Server ready on port ${PORT}`)
+        console.log("mode" + argsHelper.mode)
+    }
+
+
+    const connection = mongoose.connect(process.env.URL_MONGO)
+    if (connection) {
+        console.log("Conectado correctamente a base de datos mongo")
+    }
+
+    const swaggerOptions = {
+        definition: {
+            openapi: '3.0.3',
+            info: {
+                title: 'Documentacion de modulos de Adoptme',
+                description: 'API para manejo de logica de negocio de Adoptme'
+            }
+        },
+        apis: [`src/docs/*.yaml`]
+    }
+
+    const specs = swaggerJSDoc(swaggerOptions)
+    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+
+    app.use(compression({
+        brotli: { enabled: true }
+    }))
+    app.use(express.json());
+    app.use(cookieParser());
+
+    app.use('/api/users', usersRouter);
+    app.use('/api/pets', petsRouter);
+    app.use('/api/adoptions', adoptionsRouter);
+    app.use('/api/sessions', sessionsRouter);
+    app.use('/api/mocks', mocksRouter);
+
+    app.listen(PORT, ready, () =>
+        console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`)
+    )
+    app.use(setupResponses)
 }
-
-const connection = mongoose.connect(process.env.URL_MONGO)
-if (connection) {
-    console.log("Conectado correctamente a base de datos mongo")
-}
-
-const swaggerOptions = {
-    definition: {
-        openapi: '3.0.3',
-        info: {
-            title: 'Documentacion de modulos de Adoptme',
-            description: 'API para manejo de logica de negocio de Adoptme'
-        }
-    },
-    apis: [`src/docs/*.yaml`]
-}
-
-const specs = swaggerJSDoc(swaggerOptions)
-app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
-
-app.use(compression({
-    brotli: { enabled: true }
-}))
-app.use(express.json());
-app.use(cookieParser());
-
-app.use('/api/users', usersRouter);
-app.use('/api/pets', petsRouter);
-app.use('/api/adoptions', adoptionsRouter);
-app.use('/api/sessions', sessionsRouter);
-app.use('/api/mocks', mocksRouter);
-
-app.listen(PORT, ready, () =>
-    console.log(`Listening on ${PORT}, mode:${argsHelper.mode}`)
-)
-app.use(setupResponses)
